@@ -6,7 +6,9 @@ class Person{
 		Person(int);
 		int get();
 		void set(int);
+		int fib(int n);		// public method that calls private method fib_help
 	private:
+		int fib_help(int n);	// computes fibonacci sequence recursively
 		int age;
 	};
  
@@ -22,6 +24,16 @@ void Person::set(int n){
 	age = n;
 	}
 
+// fib (public) and fib_help (private) are methods to recursively 
+// calculate fib sequence
+int Person::fib(int n) {
+	return fib_help(n);
+}
+
+int Person::fib_help(int n) {
+	if(n <= 1) return n;
+	return fib_help(n-1) + fib_help(n-2);
+}
 
 extern "C"{
 	Person* Person_new(int n) {return new Person(n);}
@@ -33,4 +45,6 @@ extern "C"{
 			person = nullptr;
 			}
 		}
+	// C binding enables Python to call the fib method
+	int Person_fib(Person* person, int n) {return person->fib(n);}
 	}

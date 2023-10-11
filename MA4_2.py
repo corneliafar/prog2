@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# from person import Person
+from person import Person
 
 import random
 import matplotlib.pyplot as plt
@@ -10,14 +10,16 @@ import concurrent.futures as future
 from time import perf_counter as pc
 from time import sleep as pause
 
-""" def main():
+def main():
 	f = Person(5)
 	print(f.get())
 	f.set(7)
-	print(f.get()) """
+	print(f.get())
 
-# ----- 1.1 -----
+	n = 10
+	print(f'Fibonacci of {n} is: {f.fib(n)}')
 
+# ---------- 1.1 ----------
 def monte_carlo(n):
 	inside_circle = 0
 	x_inside = []	# creates 4 empty lists for x,y coordinates inside and
@@ -55,10 +57,8 @@ def plot(n_values):
 	plt.tight_layout()
 	plt.show()
 
-# ----- 1.2 -----
-
-# help for assignment: https://juanitorduz.github.io/vol_d_ball/
-
+# ---------- 1.2 ----------
+# calculate which coordinates are within bounds in accordance to sum(x1^2+x2^2+ ... +xn^2) < 1
 def within_bounds(p):
 	return sum(x**2 for x in p) <= 1
 
@@ -68,7 +68,7 @@ def monte_carlo_volume(n, d):
 	approximation = 2**d * (sum(1 for i in inside_circ) / n)
 	return approximation
 
-# ----- 1.3 -----
+# ---------- 1.3 ----------
 def monte_carlo_parallell(n, d, p):
 	with future.ProcessPoolExecutor (max_workers = p) as ex:
 		# submit(function, argument, additional argument). // = integer division
@@ -79,36 +79,47 @@ def monte_carlo_parallell(n, d, p):
 
 
 if __name__ == '__main__':
-	# main()
+	main()
 
-	# ----- 1.1 -----
+	# ---------- 1.1 ----------
 	n_values = [50, 100, 200, 400] # n is the amount of random points to generate
 	#plot(n_values)
 
-	# ----- 1.2 -----
-	n1, d1 = 100000, 2
-	n2, d2 = 100000, 11
-	n3, p = 10000, 10
+	# ---------- 1.2 ----------
+	n, d1, d2 = 100000, 2, 11
 
-	start1_1 = pc()
-	approximation1_1 = monte_carlo_parallell(n3, d2, p)
-	end1_1 = pc()
-	print(f"Approximation for V{d1}(1): {approximation1_1}. Time: {round(end1_1-start1_1, 2)} seconds.")
+	print('----- PART 1.2 -----')
+	start = pc()
+	approximation_1 = monte_carlo_volume(n, d1)
+	end = pc()
+	print(f"Approximated volume of {d1}-dimensional hypersphere (sequential): {approximation_1}. Time: {round(end-start, 2)} seconds.")
+	exact_value_1 = math.pi**(d1/2) / (math.gamma((d1/2) + 1))
+	print(f'Exact volume of {d1}-dimensional hypersphere acc. to gamma equation: {exact_value_1}')
+	print()
 
-	start1 = pc()
-	approximation1 = monte_carlo_volume(n1, d1)
-	end1 = pc()
-	exact_value1 = math.pi**(d1/2) / (math.gamma((d1/2) + 1))
+	start = pc()
+	approximation_2 = monte_carlo_volume(n, d2)
+	end = pc()
+	print(f"Approximated volume of {d2}-dimensional hypersphere (sequential): {approximation_2}. Time: {round(end-start, 2)} seconds.")
+	exact_value_2 = math.pi**(d2/2) / (math.gamma((d2/2) + 1))
+	print(f'Exact volume of {d2}-dimensional hypersphere acc. to gamma equation: {exact_value_2}')
 
-	#start2 = pc()
-	#approximation2 = monte_carlo_volume(n2, d2)
-	#end2 = pc()
-	#exact_value2 = math.pi**(d2/2) / (math.gamma((d2/2) + 1))
+	print()
 
-	print(f"Approximation for V{d1}(1): {approximation1}. Time: {round(end1-start1, 2)} seconds.")
-	print(f"Exact value for V{d1}(1): {exact_value1}")
-	#print()
-	#print(f"Approximation for V{d2}(1): {approximation2}. Time: {round(end2-start2, 2)} seconds.")
-	#print(f"Exact value for V{d2}(1): {exact_value2}")
+	# ---------- 1.3 ----------
+	n1, n2, d, p = 1000000, 100000, 11, 10
 
-	
+	# print values for sequential and parallell programming as well as theoretical value for hypersphere volume
+	print('----- PART 1.3 -----')
+	start = pc()
+	approximation = monte_carlo_volume(n1, d)
+	end = pc()
+	print(f"Approximated volume of {d}-dimensional hypersphere (sequential): {approximation}. Time: {round(end-start, 2)} seconds.")
+
+	start = pc()
+	approximation_parallell = monte_carlo_parallell(n2, d, p)
+	end = pc()
+	print(f"Approximated volume of {d}-dimensional hypersphere (parallell): {approximation_parallell}. Time: {round(end-start, 2)} seconds.")
+
+	exact_value = math.pi**(d/2) / (math.gamma((d/2) + 1))
+	print(f'Exact volume of {d}-dimensional hypersphere (gamma equation): {exact_value}.')
