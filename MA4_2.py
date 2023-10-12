@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Solutions to module 4
+Student: Cornelia Färdig
+Mail: cornelia.fardig.3943@student.uu.se
+Reviewed by: Naser Shabani
+Reviewed date: 2023-10-12
+"""
 
 from person import Person
 
@@ -36,7 +43,7 @@ def fib_timings(n):
 
 	start = pc()	# starts time rec
 	fib_py(n)
-	timings['python'] = pc() - start	# takes current time subtracted with start time and 
+	timings['python'] = pc() - start	# takes current time subtracted with start time and
 						# stores with the var name 'python' in dict.
 	start = pc()
 	fib_numba(n)
@@ -44,7 +51,7 @@ def fib_timings(n):
 
 	f = Person(n)
 	start = pc()
-	f.fib(n)
+	f.fib()
 	timings['cpp'] = pc() - start		# same as above but for cpp version
 
 	return timings
@@ -138,21 +145,31 @@ def monte_carlo_parallell(n, d, p):
 
 if __name__ == '__main__':
 	# main()
-	
+
 	# ---------- 2.2 ----------
-	# numba warm-up, in accordance to recommendations online
+	# numba warm-up, in accordance to recommendations online (without it the numba values flatlined 
+	# on 1.4 sec for all runs.
 	fib_numba(10)
 
-	n_values = list(range(28,44))
+	n_values = list(range(30,46))
 	results = parallell_fib(n_values)
-	plot_fib(n_values, results, 'fib_28_to_43.png')
+	plot_fib(n_values, results, 'fib_30_to_45.png')
+
+	# from results the fib(47) done by the c++ version is negative, but fibonacci sequences cannot be negative
+	# this is due to limitations in the c++ programming language rending it unable to manage numbers that are too long.
+	# fib_cpp(47) = -1323752223
+	# fib_numba(47) = 2971215073
+	f = Person(47)
+	print(f.fib(), fib_numba(47))
 
 	print()
 
+
 	# ---------- 1.1 ----------
-	n_values = [50, 100, 200, 400] # n is the amount of random points to generate
+	n_values = [50, 1000, 10000, 100000] # n is the amount of random points to generate
 	plot(n_values, 'monte_carlo.png')
-	#plot(n_values)
+	# plot(n_values)	# uncomment this to plot directly
+
 
 	# ---------- 1.2 ----------
 	n, d1, d2 = 100000, 2, 11
@@ -175,8 +192,9 @@ if __name__ == '__main__':
 
 	print()
 
+
 	# ---------- 1.3 ----------
-	n1, n2, d, p = 1000000, 100000, 11, 10
+	n1, n2, d, p = 10000000, 1000000, 11, 10
 
 	# print values for sequential and parallell programming as well as theoretical value for hypersphere volume
 	print('----- PART 1.3 -----')
